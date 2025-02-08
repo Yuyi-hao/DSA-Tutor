@@ -1,0 +1,5 @@
+supabase
+flask
+flask-sqlalchemy
+flask-login
+python-dotenv
