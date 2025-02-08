@@ -154,6 +154,27 @@ def mark_article_as_read(user, article_id):
     response = supabase.table("userprogress").insert(progress_entry).execute()
     return jsonify(response.data)
 
+@users.route('/articles/<string:article_id>/questions', methods=['GET'])
+@token_required
+def get_related_questions(user, article_id):
+    """Users can view practice questions related to a specific article"""
+    # Fetch the article to ensure it exists
+    response_article = supabase.table("articles").select("*").eq("id", article_id).execute()
+    article = response_article.data
+
+    if not article:
+        return jsonify({"error": "Article not found"}), 404
+
+    # Retrieve the category of the article
+    category = article[0].get('category')
+    if not category:
+        return jsonify({"error": "Article does not have a category"}), 400
+
+    # Fetch related practice questions based on the article's category
+    response_questions = supabase.table("practicequestions").select("*").eq("category", category).execute()
+    questions = response_questions.data
+
+    return jsonify({"article": article[0], "related_questions": questions})
 
 ### --- 📊 Get User Progress ---
 @users.route('/user/progress', methods=['GET'])
