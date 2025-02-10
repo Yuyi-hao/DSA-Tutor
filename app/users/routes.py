@@ -5,13 +5,6 @@ from config import ADMIN_SECRET  # Load admin secret securely
 
 users = Blueprint('users', __name__)
 
-from flask import Blueprint, request, jsonify
-from middlewares.auth import token_required  
-from app import supabase  
-from config import ADMIN_SECRET  
-
-users = Blueprint('users', __name__)
-
 @users.route('/signup', methods=['POST'])
 def signup():
     """User Registration (Email, Password, Username, Phone) with Admin Code"""
@@ -150,6 +143,18 @@ def mark_article_as_read(user, article_id):
     progress_entry = {
         "user_id": user["id"],  
         "article_id": article_id
+    }
+    response = supabase.table("userprogress").insert(progress_entry).execute()
+    return jsonify(response.data)
+
+### --- 📚 Mark  Practice Questions (Track Progress )---
+@users.route('/questions/<string:question_id>/mark-read', methods=['POST'])
+@token_required
+def mark_question_as_read(user, question_id):
+    """Users can mark articles as read (Track Progress)"""
+    progress_entry = {
+        "user_id": user["id"],  
+        "question_id": question_id
     }
     response = supabase.table("userprogress").insert(progress_entry).execute()
     return jsonify(response.data)

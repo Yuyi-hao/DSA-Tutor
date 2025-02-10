@@ -1,0 +1,7 @@
+supabase
+flask
+flask-sqlalchemy
+flask-login
+python-dotenv
+open ai
+requests
