@@ -5,13 +5,6 @@ from config import ADMIN_SECRET  # Load admin secret securely
 
 users = Blueprint('users', __name__)
 
-from flask import Blueprint, request, jsonify
-from middlewares.auth import token_required  
-from app import supabase  
-from config import ADMIN_SECRET  
-
-users = Blueprint('users', __name__)
-
 @users.route('/signup', methods=['POST'])
 def signup():
     """User Registration (Email, Password, Username, Phone) with Admin Code"""
@@ -66,7 +59,6 @@ def signup():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 ### --- 🔑 User Login (Checks Email Confirmation) ---
 @users.route('/login', methods=['POST'])
 def login():
@@ -94,14 +86,13 @@ def login():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# FIXME: gotrue.errors.AuthApiError: Missing one of these types: signup, email_change, sms, phone_change
 ### --- 🔹 Resend Confirmation Email ---
 @users.route('/resend-confirmation', methods=['POST'])
 def resend_confirmation():
     """Resend Email Confirmation Link"""
     data = request.get_json()
     email = data.get("email")
-
     try:
         response = supabase.auth.resend({"email": email})
 
@@ -114,6 +105,7 @@ def resend_confirmation():
         return jsonify({"error": str(e)}), 500
 
 
+# TODO: NOT implemented
 ### --- 🔹 Google Login ---
 @users.route('/google-login', methods=['POST'])
 def google_login():
@@ -141,7 +133,8 @@ def get_articles(user):
     response = supabase.table("articles").select("*").execute()
     return jsonify(response.data)
 
-
+# TODO: differentiate between questions and article
+# FIXME: fix double mark
 ### --- ✅ Mark Article as Read (Tracks Progress) ---
 @users.route('/articles/<string:article_id>/mark-read', methods=['POST'])
 @token_required
@@ -154,6 +147,22 @@ def mark_article_as_read(user, article_id):
     response = supabase.table("userprogress").insert(progress_entry).execute()
     return jsonify(response.data)
 
+<<<<<<< HEAD
+### --- 📚 Mark  Practice Questions (Track Progress )---
+@users.route('/questions/<string:question_id>/mark-read', methods=['POST'])
+@token_required
+def mark_question_as_read(user, question_id):
+    """Users can mark articles as read (Track Progress)"""
+    progress_entry = {
+        "user_id": user["id"],  
+        "question_id": question_id
+    }
+    response = supabase.table("userprogress").insert(progress_entry).execute()
+    return jsonify(response.data)
+
+=======
+# TODO: fetch question from category not article 
+>>>>>>> 0d780ca5a95998c5600b74dbd624c82a9da5fb37
 @users.route('/articles/<string:article_id>/questions', methods=['GET'])
 @token_required
 def get_related_questions(user, article_id):
