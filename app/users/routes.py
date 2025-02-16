@@ -147,22 +147,7 @@ def mark_article_as_read(user, article_id):
     response = supabase.table("userprogress").insert(progress_entry).execute()
     return jsonify(response.data)
 
-<<<<<<< HEAD
-### --- 📚 Mark  Practice Questions (Track Progress )---
-@users.route('/questions/<string:question_id>/mark-read', methods=['POST'])
-@token_required
-def mark_question_as_read(user, question_id):
-    """Users can mark articles as read (Track Progress)"""
-    progress_entry = {
-        "user_id": user["id"],  
-        "question_id": question_id
-    }
-    response = supabase.table("userprogress").insert(progress_entry).execute()
-    return jsonify(response.data)
-
-=======
 # TODO: fetch question from category not article 
->>>>>>> 0d780ca5a95998c5600b74dbd624c82a9da5fb37
 @users.route('/articles/<string:article_id>/questions', methods=['GET'])
 @token_required
 def get_related_questions(user, article_id):
